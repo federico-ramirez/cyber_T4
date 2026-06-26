@@ -7,13 +7,6 @@ visited = set()
 stack = []
 count = 0
 
-folder_count = 0
-file_count = 0
-total_bytes = 0
-
-global folder_count
-global file_count
-global total_bytes
 
 ROOT_FOLDER = r"/home/kali/Documents/Scripts/ABC/Files"
 OUTPUT_FILE="filetree_output.txt"
@@ -41,6 +34,10 @@ def win(parts,folder=False):
 visited=set()
 stack=[]
 count=0
+
+folder_count = 0
+file_count = 0
+total_bytes = 0
 
 def save():
     tmp=CHECKPOINT+".tmp"
@@ -80,8 +77,9 @@ try:
                 folder_count+=1
                 folders.append([e.path,rel])
             elif e.is_file(follow_symlinks=False):
-                try:s=human(e.stat().st_size)
-                size = e.stat().st_size
+                try:
+                    s=human(e.stat().st_size)
+                    size = e.stat().st_size
                 except:s="N/A"
                 line=f"[FILE]   {win(rel)} | {s}"
                 print("[SAVED]",line)
