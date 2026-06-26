@@ -3,6 +3,18 @@
 import os, json, logging, sys
 from pathlib import Path
 
+visited = set()
+stack = []
+count = 0
+
+folder_count = 0
+file_count = 0
+total_bytes = 0
+
+global folder_count
+global file_count
+global total_bytes
+
 ROOT_FOLDER = r"/home/kali/Documents/Scripts/ABC/Files"
 OUTPUT_FILE="filetree_output.txt"
 ERROR_FILE="error_log.txt"
@@ -65,13 +77,17 @@ try:
                 line=f"[FOLDER] {win(rel,True)}"
                 print("[SAVED]",line)
                 out.write(line+"\n")
+                folder_count+=1
                 folders.append([e.path,rel])
             elif e.is_file(follow_symlinks=False):
                 try:s=human(e.stat().st_size)
+                size = e.stat().st_size
                 except:s="N/A"
                 line=f"[FILE]   {win(rel)} | {s}"
                 print("[SAVED]",line)
                 out.write(line+"\n")
+                file_count+=1
+                total_bytes+=size
         for f in reversed(folders):
             stack.append(f)
         count+=1
@@ -80,4 +96,21 @@ try:
 finally:
     save()
     out.close()
+    summary = (
+        f"{folder_count:,} folders, "
+        f"{file_count:,} files found."
+        f"{total_bytes:,} GB total size"
+    )
+
+    print("\n" + "=" * 60)
+    print("Inventory Summary")
+    print("=" * 60)
+    print(summary)
+
+    out.write("\n")
+    out.write("=" * 60 + "\n")
+    out.write("Inventory Summary\n")
+    out.write("=" * 60 + "\n")
+    out.write(summary + "\n")
+
     print("Done.")
